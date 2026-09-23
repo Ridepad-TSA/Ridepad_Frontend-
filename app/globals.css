@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+
+/* Brand tokens. Emitted as CSS variables on :root and exposed as bg-*, text-*, border-* utilities. */
+@theme {
+  --color-ink: #141414;
+  --color-ink-soft: #6b6763;
+  --color-burgundy: #6e1128;
+  --color-burgundy-bright: #9a1f38;
+  --color-burgundy-tint: #f3e9ec;
+  --color-surface: #ffffff;
+  --color-canvas: #faf9f7;
+  --color-line: #e4e0dc;
+  --color-night: #0b0b0b;
+}
+
+/* Font families come from next/font variables set on <html>. */
+@theme inline {
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+}
