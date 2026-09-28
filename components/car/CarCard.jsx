@@ -2,14 +2,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Car as CarIcon } from 'lucide-react';
 import { formatNaira } from '@/lib/format';
+import Badge from '@/components/ui/Badge';
+import { BADGE_LABELS } from '@/lib/data/cars';
 
 /**
  * Summary card for search results and the landing page carousel.
  * `car.image` is optional — until real photos exist (e.g. exported from
- * Figma), a car-outline placeholder is shown instead.
+ * Figma), a car-outline placeholder is shown instead. `car.badges` is an
+ * optional array of keys from BADGE_LABELS (e.g. 'verified', 'airport').
  */
-export default function CarCard({ car }) {
-  const { id, title, area, tripType, seats, pricePerDay, image } = car;
+export default function CarCard({ car, ctaLabel = 'Book' }) {
+  const { id, title, area, tripType, seats, pricePerDay, image, badges } = car;
 
   return (
     <Link
@@ -30,6 +33,15 @@ export default function CarCard({ car }) {
             <CarIcon className="size-12 text-white/25" strokeWidth={1.25} aria-hidden="true" />
           </div>
         )}
+        {badges?.length > 0 && (
+          <div className="absolute top-2 left-2 flex flex-wrap gap-1.5">
+            {badges.map((key) => (
+              <Badge key={key} tone="brand">
+                {BADGE_LABELS[key] ?? key}
+              </Badge>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="space-y-2 p-4">
@@ -46,7 +58,7 @@ export default function CarCard({ car }) {
             <span className="font-normal text-ink-soft"> / day</span>
           </p>
           <span className="text-sm font-semibold text-burgundy group-hover:text-burgundy-bright">
-            Book
+            {ctaLabel}
           </span>
         </div>
       </div>

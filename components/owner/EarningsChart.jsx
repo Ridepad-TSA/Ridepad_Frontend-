@@ -1,4 +1,6 @@
-// Placeholder: owner earnings over time.
-export default function EarningsChart() {
-  return null;
+import BarChart from '@/components/dashboard/BarChart';
+
+/** Owner earnings over time — thin currency-formatted wrapper around the shared BarChart. */
+export default function EarningsChart({ data }) {
+  return <BarChart data={data} valueFormat="currency" />;
 }

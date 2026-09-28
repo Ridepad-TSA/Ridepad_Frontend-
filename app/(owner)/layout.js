@@ -1,10 +1,14 @@
 import RoleGuard from '@/components/layout/RoleGuard';
+import OwnerSidebar from '@/components/layout/OwnerSidebar';
 import { ROLES } from '@/lib/constants';
 
 export default function OwnerLayout({ children }) {
   return (
-    <main className="flex-1">
-      <RoleGuard allow={[ROLES.OWNER]}>{children}</RoleGuard>
-    </main>
+    <RoleGuard allow={[ROLES.OWNER]}>
+      <div className="flex flex-1">
+        <OwnerSidebar />
+        <main className="flex-1 overflow-x-auto bg-canvas">{children}</main>
+      </div>
+    </RoleGuard>
   );
 }
