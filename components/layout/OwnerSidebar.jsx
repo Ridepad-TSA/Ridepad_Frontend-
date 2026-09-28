@@ -5,6 +5,7 @@ const LINKS = [
   { label: 'Listings', href: '/listings' },
   { label: 'Bookings', href: '/bookings' },
   { label: 'Payouts', href: '/payouts' },
+  { label: 'Verification', href: '/verification' },
 ];
 
 export default function OwnerSidebar() {
