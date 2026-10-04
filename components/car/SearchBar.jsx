@@ -46,14 +46,15 @@ export default function SearchBar() {
       </label>
 
       <label className="block px-3 py-1 lg:py-0">
-        <span className="block text-xs text-ink-soft">Trip type</span>
+        <span className="block text-xs text-ink-soft">Transmission</span>
         <select
           value={transmission}
           onChange={(e) => setFilter('transmission', e.target.value)}
           className={fieldClasses}
         >
-          <option value="">With driver</option>
-          <option value="self-drive">Self drive</option>
+          <option value="">Any transmission</option>
+          <option value="automatic">Automatic</option>
+          <option value="manual">Manual</option>
         </select>
       </label>
 

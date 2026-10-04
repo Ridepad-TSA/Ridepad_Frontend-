@@ -1,100 +1,19 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import StatTile from '@/components/dashboard/StatTile';
-import BarChart from '@/components/dashboard/BarChart';
+import EmptyState from '@/components/ui/EmptyState';
+import Skeleton from '@/components/ui/Skeleton';
 import Badge from '@/components/ui/Badge';
-import { formatNaira } from '@/lib/format';
+import api from '@/lib/api';
+import { normalizeBooking, normalizeCar } from '@/lib/adapters/cars';
 import { BOOKING_STATUS_LABELS, BOOKING_STATUS_TONE } from '@/lib/constants';
-import { OVERVIEW_STATS, BOOKINGS_PER_WEEK, NEEDS_ATTENTION, RECENT_BOOKINGS } from '@/lib/data/admin';
+import { formatDateRange, formatNaira } from '@/lib/format';
 
 export default function AdminOverviewPage() {
-  return (
-    <div className="p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-xl font-bold text-ink">Overview</h1>
-        <div className="flex items-center gap-2">
-          <select className="min-h-9 rounded-lg border border-line bg-surface px-3 text-sm text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-burgundy">
-            <option>Last 30 days</option>
-            <option>Last 7 days</option>
-            <option>Last 90 days</option>
-          </select>
-          <button
-            type="button"
-            className="inline-flex min-h-9 items-center justify-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
-          >
-            Export
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {OVERVIEW_STATS.map((stat) => (
-          <StatTile key={stat.label} {...stat} />
-        ))}
-      </div>
-
-      <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
-        <div className="rounded-2xl border border-line bg-surface p-5">
-          <h2 className="font-display text-sm font-bold text-ink">Bookings per week</h2>
-          <div className="mt-4">
-            <BarChart data={BOOKINGS_PER_WEEK} unitLabel="bookings" />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-line bg-surface p-5">
-          <h2 className="font-display text-sm font-bold text-ink">Needs attention</h2>
-          <ul className="mt-3 space-y-3">
-            {NEEDS_ATTENTION.map((item) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className="flex items-center justify-between text-sm text-ink hover:text-burgundy"
-                >
-                  <span>{item.label}</span>
-                  <span className="font-semibold">{item.count}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <Link
-            href="/admin/verifications"
-            className="mt-4 flex min-h-9 w-full items-center justify-center rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
-          >
-            Open review queue
-          </Link>
-        </div>
-      </div>
-
-      <div className="mt-5 rounded-2xl border border-line bg-surface p-5">
-        <h2 className="font-display text-sm font-bold text-ink">Recent bookings</h2>
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-line text-xs text-ink-soft">
-                <th className="pb-2 font-medium">Booking</th>
-                <th className="pb-2 font-medium">Renter</th>
-                <th className="pb-2 font-medium">Car</th>
-                <th className="pb-2 font-medium">Amount</th>
-                <th className="pb-2 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {RECENT_BOOKINGS.map((booking) => (
-                <tr key={booking.bookingId} className="border-b border-line last:border-0">
-                  <td className="py-2.5 font-medium text-ink">{booking.bookingId}</td>
-                  <td className="py-2.5 text-ink-soft">{booking.renter}</td>
-                  <td className="py-2.5 text-ink-soft">{booking.car}</td>
-                  <td className="py-2.5 text-ink-soft">{formatNaira(booking.amount)}</td>
-                  <td className="py-2.5">
-                    <Badge tone={BOOKING_STATUS_TONE[booking.status]}>
-                      {BOOKING_STATUS_LABELS[booking.status]}
-                    </Badge>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
+  const [data, setData] = useState({ cars: [], bookings: [], active: [], overdue: [] }); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
+  useEffect(() => { Promise.all([api.get('/cars/admin/all'), api.get('/bookings'), api.get('/bookings/active'), api.get('/bookings/overdue')]).then(([cars, bookings, active, overdue]) => setData({ cars: (cars.data || []).map(normalizeCar), bookings: (bookings.data || []).map(normalizeBooking), active: (active.data || []).map(normalizeBooking), overdue: (overdue.data || []).map(normalizeBooking) })).catch((err) => setError(err.message)).finally(() => setLoading(false)); }, []);
+  const stats = [{ label: 'Total vehicles', value: data.cars.length, change: 'Fleet inventory' }, { label: 'Available vehicles', value: data.cars.filter((car) => car.isActive).length, change: 'Active catalogue vehicles' }, { label: 'Total bookings', value: data.bookings.length, change: 'All booking records' }, { label: 'Active rentals', value: data.active.length, change: 'Currently picked up' }, { label: 'Overdue rentals', value: data.overdue.length, change: 'Require return follow-up' }];
+  return <div className="p-6"><div className="flex items-center justify-between"><h1 className="font-display text-xl font-bold text-ink">Overview</h1><Link href="/admin/inventory/new" className="inline-flex min-h-9 items-center justify-center rounded-lg bg-burgundy px-4 text-sm font-semibold text-white hover:bg-burgundy-bright">Add vehicle</Link></div>{loading ? <><div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-5">{[1, 2, 3, 4].map((item) => <Skeleton key={item} className="h-24" />)}</div><Skeleton className="mt-5 h-64" /></> : error ? <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700"><p>{error}</p><button type="button" onClick={() => window.location.reload()} className="mt-3 rounded-lg border border-red-300 px-3 py-2 font-semibold">Retry</button></div> : <><div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-5">{stats.map((stat) => <StatTile key={stat.label} {...stat} />)}</div><div className="mt-5 rounded-2xl border border-line bg-surface p-5"><h2 className="font-display text-sm font-bold text-ink">Booking activity</h2>{data.bookings.length ? <p className="mt-4 text-sm text-ink-soft">There are {data.bookings.length} booking records in the backend.</p> : <div className="mt-4"><EmptyState title="No bookings yet" body="Booking activity will appear here when customers reserve a vehicle." /></div>}</div><div className="mt-5 rounded-2xl border border-line bg-surface p-5"><div className="flex items-center justify-between"><h2 className="font-display text-sm font-bold text-ink">Recent bookings</h2><Link href="/admin/bookings" className="text-sm font-semibold text-burgundy">View all</Link></div>{data.bookings.length === 0 ? <div className="mt-4"><EmptyState title="No bookings yet" /></div> : <div className="mt-3 overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr className="border-b border-line text-xs text-ink-soft"><th className="pb-2 font-medium">Renter</th><th className="pb-2 font-medium">Vehicle</th><th className="pb-2 font-medium">Dates</th><th className="pb-2 font-medium">Amount</th><th className="pb-2 font-medium">Status</th></tr></thead><tbody>{data.bookings.slice(0, 5).map((booking) => <tr key={booking.id} className="border-b border-line last:border-0"><td className="py-2.5">{booking.user?.name || booking.user?.email || '—'}</td><td className="py-2.5 text-ink-soft">{booking.car?.title || '—'}</td><td className="py-2.5 text-ink-soft">{formatDateRange(booking.pickupDate, booking.returnDate)}</td><td className="py-2.5 text-ink-soft">{formatNaira(booking.totalPrice)}</td><td className="py-2.5"><Badge tone={BOOKING_STATUS_TONE[booking.status] || 'default'}>{BOOKING_STATUS_LABELS[booking.status] || booking.status}</Badge></td></tr>)}</tbody></table></div>}</div></>}</div>;
 }

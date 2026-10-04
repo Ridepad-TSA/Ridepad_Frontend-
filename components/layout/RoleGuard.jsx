@@ -8,7 +8,6 @@ import { ROLES } from '@/lib/constants';
 
 const HOME_BY_ROLE = {
   [ROLES.RENTER]: '/search',
-  [ROLES.OWNER]: '/dashboard',
   [ROLES.ADMIN]: '/admin/overview',
 };
 
