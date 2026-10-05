@@ -28,19 +28,19 @@ export default function SearchBar() {
 
       <label className="block px-3 py-1 lg:py-0">
         <span className="block text-xs text-ink-soft">Dates</span>
-        <div className="flex items-center gap-1 text-sm font-medium text-ink">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 text-sm font-medium text-ink">
           <input
             type="date"
             value={startDate ?? ''}
             onChange={(e) => setFilter('startDate', e.target.value)}
-            className="w-full bg-transparent focus:outline-none"
+            className="min-w-0 w-full bg-transparent focus:outline-none"
           />
           <span className="text-ink-soft">to</span>
           <input
             type="date"
             value={endDate ?? ''}
             onChange={(e) => setFilter('endDate', e.target.value)}
-            className="w-full bg-transparent focus:outline-none"
+            className="min-w-0 w-full bg-transparent focus:outline-none"
           />
         </div>
       </label>

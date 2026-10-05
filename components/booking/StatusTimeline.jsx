@@ -26,7 +26,7 @@ export default function StatusTimeline({ status }) {
               </span>
               <span
                 className={clsx(
-                  'text-center text-[11px] whitespace-nowrap',
+                  'max-w-[4.5rem] text-center text-[11px] leading-tight whitespace-normal',
                   current ? 'font-semibold text-ink' : 'text-ink-soft',
                 )}
               >
