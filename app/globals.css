@@ -32,4 +32,11 @@
   h4 {
     font-family: var(--font-display);
   }
+
+  ::selection { background: var(--color-burgundy-tint); color: var(--color-ink); }
+  :focus-visible { outline: 2px solid var(--color-burgundy); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
 }
