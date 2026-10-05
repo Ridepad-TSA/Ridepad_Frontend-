@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/layout/Logo';
 import RegisterForm from '@/components/auth/RegisterForm';
@@ -19,7 +20,7 @@ export default function RegisterPage() {
           Create an account to browse and request Ridepad vehicles.
         </p>
 
-        <RegisterForm />
+        <Suspense fallback={null}><RegisterForm /></Suspense>
       </div>
 
       <p className="mt-6 text-sm text-ink-soft">

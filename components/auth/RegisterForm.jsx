@@ -1,16 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/components/ui/Input';
 import api, { clearAuthTokenCache } from '@/lib/api';
 import { registerSchema } from '@/lib/validators/auth';
+import { safeCustomerCallback } from '@/lib/authRedirect';
 
 export default function RegisterForm() {
-  const router = useRouter();
+  const router = useRouter(); const searchParams = useSearchParams();
   const [formError, setFormError] = useState('');
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm({ resolver: zodResolver(registerSchema) });
 
@@ -21,7 +22,7 @@ export default function RegisterForm() {
       const result = await signIn('credentials', { email: values.email, password: values.password, redirect: false });
       clearAuthTokenCache();
       if (!result || result.error) { router.push('/login'); return; }
-      router.push('/search');
+      router.push(safeCustomerCallback(searchParams.get('callbackUrl')));
       router.refresh();
     } catch (err) {
       setFormError(err.message);
