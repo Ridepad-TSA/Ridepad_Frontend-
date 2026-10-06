@@ -18,5 +18,5 @@ export default function VehicleImage({ src, alt, sizes, className, priority = fa
   const backendUpload = isBackendUpload(src);
   useEffect(() => setFailed(false), [src]);
   if (!src || failed) return <VehiclePlaceholder />;
-  return <Image src={src} alt={alt} fill sizes={sizes} priority={priority} unoptimized={backendUpload} className={className} onError={() => setFailed(true)} />;
+  return <Image src={src} alt={alt} fill sizes={sizes} priority={priority} unoptimized  className={className} onError={() => setFailed(true)} />;
 }
