@@ -6,7 +6,6 @@ export default function ContactPage() {
 return ( <main className="flex-1 bg-white"> <section className="bg-night px-4 py-16 text-white sm:px-6"> <div className="mx-auto max-w-4xl"> <p className="text-sm font-semibold uppercase tracking-wider text-burgundy-bright">
 Contact Us </p>
 
-```
       <h1 className="mt-4 font-display text-4xl font-extrabold sm:text-5xl">
         How can we help you?
       </h1>
